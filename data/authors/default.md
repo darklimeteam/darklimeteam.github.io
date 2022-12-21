@@ -1,16 +1,14 @@
 ---
-name: Tails Azimuth
-avatar: /static/images/avatar.png
-occupation: Professor of Atmospheric Science
-company: Stanford University
-email: address@yoursite.com
-twitter: https://twitter.com/Twitter
-linkedin: https://www.linkedin.com
-github: https://github.com
+name: Nataly Chkhan
+avatar: /static/images/avatar.jpeg
+occupation: CEO at DarkLime
+company: DarkLime
+email: darklimeteam@gmail.com
+twitter: https://twitter.com/DarkLimeTeam
+linkedin: https://www.linkedin.com/in/nataly-chkhan-665462109/
+github: https://github.com/JsssCode
+stackoverflow: https://stackoverflow.com/users/18985812/nataly-chkhan
 ---
 
-Tails Azimuth is a professor of atmospheric sciences at the Stanford AI Lab. His research interests includes complexity modelling of tailwinds, headwinds and crosswinds.
-
-He leads the clean energy group which develops 3D air pollution-climate models, writes differential equation solvers, and manufactures titanium plated air ballons. In his free time he bakes raspberry pi.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.
+Nataly Chkhan is the CEO and a passionate front-end developer at the DarkLime team. She participates in the entire app development lifecycle, from requirements and UI/UX design to the constant app improvement stage. Her research interests include improving the organization of the development process as well as technical topics such as large app architecture, module federation and DDD, Angular best practices, and state management approaches.
+ 

@@ -1,0 +1,290 @@
+---
+title: 'Angular, React, and Vue in 2023 - all in one app using Webpack 5 Module Federation'
+date: '2022-12-15'
+tags: ['module federation', 'domain-driven design', 'Angular React Vue 2023']
+draft: false
+summary: 'The subject of this article is to go through the technical implementation 
+of React and Vue remote modules injection into the Angular shell app with the help of
+Webpack 5 ModuleFederationPlugin...'
+---
+
+# Angular, React, and Vue in 2023 - all in one app using Webpack 5 Module Federation
+
+_Title_: Angular, React, and Vue in 2023 with module federation
+
+_Author_: Nataly Chkhan
+
+_Subject_: Module federation (Angular & React & Vue)
+
+_Duration_: 5 minutes read
+
+_Language_: English
+
+Link to repo: https://github.com/darklimeteam/module-federation-angular-react-vue
+
+## Why do I need Module Federation?
+
+The subject of this article is to go through the technical implementation of
+injecting React and Vue remote modules into an Angular shell app using Webpack 5's
+ModuleFederationPlugin. This plugin allows dividing an app into remotely loaded
+modules, also known as a Microfrontend approach. But why do we need Microfrontends?
+Let's consider a scenario where different apps have a `PROFILE` page where users can
+view and edit their personal data, and a `SETTINGS` page. We might consider
+the possibility of separating these pages from the main app and loading them
+asynchronously from remote sources.
+
+![http://localhost:4201/](/static/images/1an.png)
+
+Let’s think about possible scenario of module federation preference over monolit.
+In this particular case, using module federation with Microfrontends might be a good
+choice for a few reasons:
+
+1. Delegating the development of the `PROFILE` and `SETTINGS` modules to a standalone
+   team allows them to work independently and potentially at a faster pace.
+2. If the main app uses a different framework or version of the framework, using
+   module federation allows the `PROFILE` and `SETTINGS` modules to be developed and
+   maintained independently, even if they use a different framework.
+3. If the app is large, using module federation can help break it down into smaller,
+   more manageable pieces, making it easier to upgrade one module at a time without
+   affecting the rest of the app.
+4. Deploying the `PROFILE` and `SETTINGS` modules separately from the main app allows
+   for more flexibility and faster deployment times, as the main app does not need to be
+   rebuilt and redeployed every time a change is made to one of these modules.
+
+If you want to learn more about Module Federation and related concepts, the list of
+useful links at the end of the article can be a great resource. Alternatively, if
+you want to see how an Angular, React, and Vue sample works, we can go through that
+as well.
+
+Let’s start from scratch. 3 folders should be created (see below).
+
+![Project folders](/static/images/2an.png)
+
+In our case, we consider Angular app as a shell, and `PROFILE` together
+with `SETTINGS` as the remote modules.
+
+![The app with remotes](/static/images/1an1.png)
+
+The next two sections are about React and Vue remote modules
+development.
+
+## React PROFILE remote module
+
+Let’s start with the React PROFILE module implementation. Its source code could be
+found [here](https://github.com/darklimeteam/module-federation-angular-react-vue/tree/main/react-component).
+It contains a quite simple form where user can edit his name and email. Implementation
+is very simple. One thing you should pay attention on: `bootstrap.js` file is
+mandatory, because of a bug described [here](https://stackoverflow.com/questions/71228191/shared-module-is-not-available-for-eager-consumption-angular-13).
+
+To run this app do the next in the app folder:
+
+```js:
+yarn
+yarn start
+```
+
+After that you may see the next form in your browser (port 3001):
+
+![http://localhost:3001](/static/images/3an.png)
+
+Let’s make a closer look at ModuleFederationPlugin settings in the `webpack.config.js`
+file
+
+```js:webpack.config.js
+    new ModuleFederationPlugin({
+      name: 'profile_user',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './ProfileReactComponent': './src/ProfileReactComponent',
+      },
+      shared: {
+        react: {
+          singleton: true,
+          requiredVersion: deps.react,
+          eager: true
+        },
+       'react-dom': {
+         singleton: true,
+         requiredVersion: deps['react-dom'],
+         eager: true
+       }
+      },
+    }),
+```
+
+Here ReactProfileComponent was exposed, react libs were shared.
+Note that all imported code, like listed in `profile-style.css`
+will be included in exposes module together with the
+ReactProfileComponent.tsx.
+
+### Vue SETTINGS remote module
+
+Vue source code could be found [here](https://github.com/darklimeteam/module-federation-angular-react-vue/tree/main/vue-component).
+
+To run Vue app do the next in the app folder:
+
+```js:
+yarn
+yarn start
+```
+
+![http://localhost:3002](/static/images/4an.png)
+
+ModuleFederationPlugin settings in the `webpack.config.js` file of Vue
+SETTINGS component looks like the next
+
+```js:webpack.config.js
+new ModuleFederationPlugin({
+     name: 'settings_user',
+     filename: 'remoteEntry.js',
+     exposes: {
+       './Settings': './src/components/Settings'
+     },
+     shared: {
+       vue: {
+         eager: true,
+         requiredVersion: deps.vue,
+       },
+     },
+   }),
+```
+
+defidefineCustomElement from Vue 3 is used to avoid React & Vue conflict
+in Angular shell app. defidefineCustomElement allows to build Vue component
+as an isolated element into the shadow-dom.
+
+###Angular shell with the remotes
+Let’s use React PROFILE module and Vue SETTINGS module as the remotes into `angular-shell`.
+
+The question is when remotes should be loaded into the Angular shell app.
+The answer really depends on the requirements of the particular app. In
+our case, React and Vue components should appear on the homepage of Angular
+shell app, so `LoadRemoteModule` methods run as a part of the app initialization
+process.
+
+```js:angular-shell/src/app/app.module.ts
+export function initializeApp(): () => void {
+ return () => {
+   loadRemoteModule({
+     remoteEntry: "http://localhost:3001/remoteEntry.js",
+     remoteName: "profile_user",
+     exposedModule: "./ProfileReactComponent",
+   });
+   loadRemoteModule({
+     remoteEntry: "http://localhost:3002/remoteEntry.js",
+     remoteName: "settings_user",
+     exposedModule: "./Settings",
+   });
+ };
+}
+
+@NgModule({
+ declarations: [AppComponent],
+ imports: [BrowserModule, RouterModule.forRoot(routes)],
+ providers: [
+   {
+     provide: APP_INITIALIZER,
+     useFactory: initializeApp,
+     multi: true,
+   },
+ ],
+```
+
+Pay attention on webpack.config.ts, here in WebpackFederationPlugin
+section remotes appear again. Next to them - shared React libs to allow
+`angular-shell` be a federated module by itself.
+
+```js:angular-shell/webpack.config.ts
+new container.ModuleFederationPlugin({
+     name: "angular-shell",
+     filename: "remoteEntry.js",
+     remotes: {
+       profile_user: `profile_user@http://localhost:3001/remoteEntry.js`,
+       settings_user: `settings_user@http://localhost:3002/remoteEntry.js`,
+     },
+     shared: {
+       react: {
+         singleton: true,
+         requiredVersion: deps.react,
+       },
+       "react-dom": {
+         singleton: true,
+         requiredVersion: deps["react-dom"],
+       },
+     },
+   }),
+```
+
+Webpack devServer headers with `"Access-Control-Allow-Origin": "*"`
+allows to avoid CORS error.
+
+![http://localhost:3002](/static/images/5an.png)
+
+`angular.json` file should be modified to replace angular default webpack
+config by our custom one. See changes [here](https://github.com/darklimeteam/module-federation-angular-react-vue/commit/d9e7d0f09f5f6b3cd6b903f4618d1a07d936ddf1).
+
+Let’s finally move to React component injection into Angular one.
+`profile-user.component.ts` has been created as container that utilized
+React component. ProfileReactComponent has been loaded asynchronically
+in `ngAfterViewInit`. `decl.d.ts` has been created to tell Angular that
+“profile_user” is valid import directory.
+
+```js:angular-shell/src/app/profile-user/profile-user.component.ts
+ngAfterViewInit() {
+    this.root = createRoot(this.containerRef.nativeElement);
+    this.root.render("Loading script...");
+    try {
+      import("profile_user/ProfileReactComponent").then((val) => {
+        this.root.render(
+          React.createElement(val.ProfileReactComponent, {
+            ...this.user,
+            onClick: this.updateCurrentUser,
+          })
+        );
+      });
+    } catch (error) {
+      console.log("Erorr", error);
+    }
+  }
+```
+
+React PROFILE component interacts with Angular shell by onClick function
+usage. As a result of the name and email submitting in React component,
+Angular shell app invokes updateCurrentUser to change this data in
+`app.component`.
+
+Vue SETTINGS component is injected into `settings.component.ts` wrapper.
+Approach is very similar to React PROFILE one. ngAfterInit from
+`settings.component.ts` listed below
+
+```js:angular-shell/src/app/settings/settings.component.ts
+import("settings_user/Settings").then((val) => {
+       this.renderer.appendChild(
+         this.containerVueRef.nativeElement,
+         new val.default()
+       );
+     });
+```
+
+That's it. Let’s run Angular shell app. Note the use of yarn. This is
+required to override the webpack version for the angular cli. In
+`angular-shell` folder run the next commands:
+
+```js:
+ng new --skip-install
+ng config cli.packageManager yarn
+yarn install
+```
+
+The app starts using port 4201.
+![http://localhost:4201](/static/images/1an.png)
+
+What the next?
+
+You might have noticed that a Vue component doesn't send data to the
+Angular shell. A Vue custom element uses the Shadow DOM to
+encapsulate component behavior, so the best approach in this case is
+to use an external store to get and put data through the microfrontend
+apps. This approach is the subject of the next article.
+
+Thanks for reading this!
