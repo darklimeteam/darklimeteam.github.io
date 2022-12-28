@@ -1,5 +1,14 @@
 ![tailwind-nextjs-banner](/public/static/images/twitter-card.png)
 
+
+# How to build and deploy
+1. npm run build
+2. npm run export
+3. npm run deploy
+4. Find and replace `articles/articles` to `articles`
+5. For correct homepage link, find https://darklimeteam.com/articles" replace to https://darklimeteam.com"
+
+
 # Tailwind Nextjs Starter Blog
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/timlrx/tailwind-nextjs-starter-blog?style=social)](https://GitHub.com/timlrx/tailwind-nextjs-starter-blog/stargazers/)
