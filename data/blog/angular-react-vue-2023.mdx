@@ -33,7 +33,7 @@ view and edit their personal data, and a `SETTINGS` page. We might consider
 the possibility of separating these pages from the main app and loading them
 asynchronously from remote sources.
 
-![http://localhost:4201/](/static/images/1an.png)
+![http://localhost:4201/](/articles/static/images/1an.png)
 
 Let’s think about possible scenario of module federation preference over monolit.
 In this particular case, using module federation with Microfrontends might be a good
@@ -55,15 +55,15 @@ If you want to learn more about Module Federation and related concepts, the list
 useful links at the end of the article can be a great resource. Alternatively, if
 you want to see how an Angular, React, and Vue sample works, we can go through that
 as well.
-
+x
 Let’s start from scratch. 3 folders should be created (see below).
 
-![Project folder](/static/images/2an.png)
+![Project folder](/articles/static/images/2an.png)
 
 In our case, we consider Angular app as a shell, and `PROFILE` together
 with `SETTINGS` as the remote modules.
 
-![The app with remotes](/static/images/1an1.png)
+![The app with remotes](/articles/static/images/1an1.png)
 
 The next two sections are about React and Vue remote modules
 development.
@@ -85,7 +85,7 @@ yarn start
 
 After that you may see the next form in your browser (port 3001):
 
-![http://localhost:3001](/static/images/3an.png)
+![http://localhost:3001](/articles/static/images/3an.png)
 
 Let’s make a closer look at ModuleFederationPlugin settings in the `webpack.config.js`
 file
@@ -128,7 +128,7 @@ yarn
 yarn start
 ```
 
-![http://localhost:3002](/static/images/4an.png)
+![http://localhost:3002](/articles/static/images/4an.png)
 
 ModuleFederationPlugin settings in the `webpack.config.js` file of Vue
 SETTINGS component looks like the next
@@ -218,7 +218,7 @@ new container.ModuleFederationPlugin({
 Webpack devServer headers with `"Access-Control-Allow-Origin": "*"`
 allows to avoid CORS error.
 
-![http://localhost:3002](/static/images/5an.png)
+![http://localhost:3002](/articles/static/images/5an.png)
 
 `angular.json` file should be modified to replace angular default webpack
 config by our custom one. See changes [here](https://github.com/darklimeteam/module-federation-angular-react-vue/commit/d9e7d0f09f5f6b3cd6b903f4618d1a07d936ddf1).
@@ -277,7 +277,7 @@ yarn install
 ```
 
 The app starts using port 4201.
-![http://localhost:4201](/static/images/1an.png)
+![http://localhost:4201](/articles/static/images/1an.png)
 
 What the next?
 

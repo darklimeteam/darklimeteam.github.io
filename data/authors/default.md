@@ -1,6 +1,6 @@
 ---
 name: Nataly Chkhan
-avatar: /static/images/avatar.jpeg
+avatar: /articles/static/images/avatar.jpeg
 occupation: CEO at DarkLime
 company: DarkLime
 email: darklimeteam@gmail.com
