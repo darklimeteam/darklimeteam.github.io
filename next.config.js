@@ -53,7 +53,7 @@ const securityHeaders = [
     value: 'camera=(), microphone=(), geolocation=()',
   },
 ]
-
+const basePath = '/articles'
 module.exports = withPlugins([
   [
     optimizedImages,
@@ -61,7 +61,7 @@ module.exports = withPlugins([
       // these are the default values so you don't have to provide them if they are good enough for your use-case.
       // but you can overwrite them here with any valid value you want.
       inlineImageLimit: 8192,
-      imagesFolder: 'static/images',
+      imagesFolder: `/static/images`,
       imagesName: '[name]-[hash].[ext]',
       handleImages: ['jpeg', 'jpg', 'png', 'svg', 'webp', 'gif'],
       removeOriginalExtension: false,
@@ -121,9 +121,9 @@ module.exports = withPlugins([
             'react-dom': 'preact/compat',
           })
         }
-
         return config
       },
+      basePath,
     },
   ],
 ])
