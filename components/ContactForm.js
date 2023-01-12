@@ -14,15 +14,15 @@ const ContactForm = () => {
         <a href="https://darklimeteam.com/#contactUs">Drop me a line</a>
       </p>
       <div className="mb-2">
-        <span className="pr-4">or</span>
+        <span className="pr-4 dark:text-gray-100">or</span>
         <button
-          className="inline-flex items-center rounded-md border-2 border-zinc-200 px-3 py-1"
+          className="inline-flex items-center rounded-md border-2 border-zinc-200 px-3 py-1 dark:fill-gray-100"
           onClick={showPhoneNumber}
         >
           <>
             <PhoneCall />
           </>
-          <span className="pl-3">call</span>
+          <span className="pl-3 dark:text-gray-100">call</span>
         </button>
         {show ? (
           <p className="my-1">
